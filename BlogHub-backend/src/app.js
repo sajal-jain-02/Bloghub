@@ -4,6 +4,7 @@ const authRouter = require("./routes/auth.routes");
 const postRouter = require("./routes/post.routes");
 const commentRouter = require("./routes/comment.routes");
 const bookmarkRouter = require("./routes/bookmark.routes");
+const profileRouter = require("./routes/profile.routes");
 const cors = require('cors');
 
 const app = express();
@@ -19,5 +20,6 @@ app.use("/api/auth", authRouter);
 app.use("/api/post", postRouter);
 app.use("/api/comment", commentRouter);
 app.use("/api/bookmarks", bookmarkRouter);
+app.use("/api/profile", profileRouter);
 
 module.exports = app;

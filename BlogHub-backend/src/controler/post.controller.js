@@ -2,7 +2,7 @@ const postModel = require("../models/post.model");
 const commentModel = require("../models/comment.model");
 const bookmarkModel = require("../models/bookmark.model");
 const mongoose = require("mongoose");
-const { findExistingKey, createRequestHash, saveIdempotencyKey } = require("../services/idempotency.services");
+const { findExistingKey, createRequestHash, saveIdempotencyKey } = require("../services/idempotency.service");
 
 async function respondWithExistingIdempotencyResult(res, userId, key, requestHash) {
     const existing = await findExistingKey(userId, key);

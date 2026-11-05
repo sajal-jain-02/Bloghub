@@ -1,4 +1,5 @@
 const postModel = require("../models/post.model");
+const userModel = require("../models/user.model");
 const commentModel = require("../models/comment.model");
 const bookmarkModel = require("../models/bookmark.model");
 const mongoose = require("mongoose");
@@ -207,6 +208,72 @@ async function getAllPosts(req, res) {
     }
 }
 
+async function getUserPosts(req, res) {
+    try {
+        const { userId } = req.params;
+
+        const user = await userModel.findById(userId);
+        if (!user) {
+            return res.status(404).json({
+                message: "User not found"
+            });
+        }
+
+        let page = Number(req.query.page ?? 1);
+        if (!Number.isInteger(page) || page <= 0) {
+            return res.status(400).json({
+                message: "Invalid page number"
+            });
+        }
+
+        let limit = Number(req.query.limit ?? 10);
+        if (!Number.isInteger(limit) || limit <= 0) {
+            return res.status(400).json({
+                message: "Invalid limit"
+            });
+        }
+
+        if (limit > 100) {
+            return res.status(400).json({
+                message: "Limit cannot exceed 100"
+            });
+        }
+
+        const sort = req.query.sort ?? "newest";
+
+        if (!["newest", "oldest"].includes(sort)) {
+            return res.status(400).json({
+                message: "Invalid sort value"
+            });
+        }
+
+        const sortDirection = sort === "newest" ? -1 : 1;
+
+        const posts = await postModel
+            .find({ author: userId })
+            .sort({ createdAt: sortDirection })
+            .skip((page - 1) * limit)
+            .limit(limit);
+
+        const totalPosts = await postModel.countDocuments({ author: userId });
+        const totalPages = Math.ceil(totalPosts / limit);
+
+        res.status(200).json({
+            message: "Posts fetched successfully",
+            posts,
+            totalPages: totalPages,
+            totalPosts: totalPosts,
+            currentPage: page
+        });
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            message: "Internal server error"
+        });
+    }
+}
+
 async function getPostByID (req, res) {
     try{
         const { id } = req.params;
@@ -400,5 +467,6 @@ module.exports = {
     getAllPosts,
     getPostByID,
     updatePost,
-    deletePost
+    deletePost,
+    getUserPosts
 }

@@ -1,5 +1,6 @@
 const userModel = require("../models/user.model");
 const followModel = require("../models/follow.model");
+const { uploadFile, deleteFile } = require("../services/imagekit.service");
 const mongoose = require("mongoose");
 
 async function getPublicProfile(req, res) {
@@ -352,6 +353,102 @@ async function getFollowing(req, res) {
     }
 }
 
+async function uploadProfilePhoto(req, res) {
+    try {
+        if (!req.file) {
+            return res.status(400).json({
+                message: "No file provided"
+            });
+        }
+
+        const user = await userModel.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json({
+                message: "User not found"
+            });
+        }
+
+        const oldFileId = user.profilePhotoFileId;
+        const extension = req.file.originalname.split('.').pop();
+        const fileName = `${req.user.id}-${Date.now()}.${extension}`;
+
+        const { url, fileId } = await uploadFile(req.file.buffer, fileName, "profile-photos");
+
+        user.profilePhoto = url;
+        user.profilePhotoFileId = fileId;
+
+        try {
+            await user.save();
+        } catch (error) {
+            await deleteFile(fileId);
+            throw error;
+        }
+
+        if (oldFileId) {
+            await deleteFile(oldFileId);
+        }
+
+        res.status(200).json({
+            message: "Profile photo updated successfully",
+            profilePhoto: url
+        });
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            message: "Internal server error"
+        });
+    }
+}
+
+async function uploadCoverPhoto(req, res) {
+    try {
+        if (!req.file) {
+            return res.status(400).json({
+                message: "No file provided"
+            });
+        }
+
+        const user = await userModel.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json({
+                message: "User not found"
+            });
+        }
+
+        const oldFileId = user.coverPhotoFileId;
+        const extension = req.file.originalname.split('.').pop();
+        const fileName = `${req.user.id}-${Date.now()}.${extension}`;
+
+        const { url, fileId } = await uploadFile(req.file.buffer, fileName, "cover-photos");
+
+        user.coverPhoto = url;
+        user.coverPhotoFileId = fileId;
+
+        try {
+            await user.save();
+        } catch (error) {
+            await deleteFile(fileId);
+            throw error;
+        }
+
+        if (oldFileId) {
+            await deleteFile(oldFileId);
+        }
+
+        res.status(200).json({
+            message: "Cover photo updated successfully",
+            coverPhoto: url
+        });
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            message: "Internal server error"
+        });
+    }
+}
+
 module.exports = {
     getPublicProfile,
     getOwnProfile,
@@ -359,5 +456,7 @@ module.exports = {
     followUser,
     unfollowUser,
     getFollowers,
-    getFollowing
+    getFollowing,
+    uploadProfilePhoto,
+    uploadCoverPhoto
 };

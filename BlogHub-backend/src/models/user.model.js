@@ -29,8 +29,17 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: "",
         maxLength: 500
+    },
+    profilePhotoFileId: {
+        type: String,
+        default: null
+    },
+
+    coverPhotoFileId: {
+        type: String,
+        default: null
     }
-})
+    })
 
 const userModel = mongoose.model("user", userSchema)
 module.exports = userModel

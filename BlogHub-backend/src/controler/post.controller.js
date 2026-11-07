@@ -1,5 +1,6 @@
 const postModel = require("../models/post.model");
 const userModel = require("../models/user.model");
+const likeModel = require("../models/like.model");
 const commentModel = require("../models/comment.model");
 const bookmarkModel = require("../models/bookmark.model");
 const mongoose = require("mongoose");
@@ -126,17 +127,20 @@ async function getAllPosts(req, res) {
                 message:"Invalid page number"
             })
         }
+
         let limit = Number(req.query.limit ?? 10);
         if(!Number.isInteger(limit) || limit <=0 ){
             return res.status(400).json({
                 message:"Invalid limit"
             })
         }
+
         if(limit > 100){
             return res.status(400).json({
                 message:"Limit cannot exceed 100"
             })
         }
+
         const sort = req.query.sort ?? "newest";
 
         if (!["newest", "oldest"].includes(sort)) {
@@ -191,10 +195,32 @@ async function getAllPosts(req, res) {
         const totalPosts = await postModel.countDocuments(filter);
         const totalPages = Math.ceil(totalPosts / limit);
 
+        const postsWithLikes = await Promise.all(
+            posts.map(async (post) => {
+                const likesCount = await likeModel.countDocuments({
+                    post: post._id
+                });
+
+                let isLiked = false;
+                if (req.user) {
+                    isLiked = await likeModel.exists({
+                        user: req.user.id,
+                        post: post._id
+                    });
+                }
+
+                return {
+                    ...post.toObject(),
+                    likesCount,
+                    isLiked
+                };
+            })
+        );
+
 
         res.status(200).json({
             message:"Posts fetched successfully",
-            posts,
+            posts: postsWithLikes,
             totalPages: totalPages,
             totalPosts: totalPosts,
             currentPage: page
@@ -258,9 +284,31 @@ async function getUserPosts(req, res) {
         const totalPosts = await postModel.countDocuments({ author: userId });
         const totalPages = Math.ceil(totalPosts / limit);
 
+        const postsWithLikes = await Promise.all(
+            posts.map(async (post) => {
+                const likesCount = await likeModel.countDocuments({
+                    post: post._id
+                });
+
+                let isLiked = false;
+                if (req.user) {
+                    isLiked = await likeModel.exists({
+                        user: req.user.id,
+                        post: post._id
+                    });
+                }
+
+                return {
+                    ...post.toObject(),
+                    likesCount,
+                    isLiked
+                };
+            })
+        );
+
         res.status(200).json({
             message: "Posts fetched successfully",
-            posts,
+            posts: postsWithLikes,
             totalPages: totalPages,
             totalPosts: totalPosts,
             currentPage: page
@@ -283,9 +331,25 @@ async function getPostByID (req, res) {
                 message:"Post not found"
             })
         }
+        const likesCount = await likeModel.countDocuments({
+            post: post._id
+        });
+
+        let isLiked = false;
+        if (req.user) {
+            isLiked = await likeModel.exists({
+                user: req.user.id,
+                post: post._id
+            });
+        }
+
         res.status(200).json({
             message:"Post fetched successfully",
-            post
+            post: {
+                ...post.toObject(),
+                likesCount,
+                isLiked
+            }
         })
     } catch(error){
         console.log(error);
@@ -423,6 +487,7 @@ async function deletePost(req, res) {
 
         await commentModel.deleteMany({post: id}, {session});
         await bookmarkModel.deleteMany({post: id}, {session});
+        await likeModel.deleteMany({post: id}, {session});
         await post.deleteOne({session});
 
         const responseBody = {

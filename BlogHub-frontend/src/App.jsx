@@ -4,6 +4,8 @@ import Hero from './components/landing/Hero'
 import TrendingMarquee from './components/landing/TrendingMarquee'
 import FeaturedPosts from './components/landing/FeaturedPosts'
 import Features from './components/landing/Features'
+import CallToAction from './components/landing/CallToAction'
+import Footer from './components/landing/Footer'
 
 function App() {
   return (
@@ -19,6 +21,8 @@ function App() {
         <TrendingMarquee />
         <FeaturedPosts />
         <Features />
+        <CallToAction />
+        <Footer />
       </motion.div>
     </div>
   )

@@ -3,11 +3,13 @@ import { motion } from 'framer-motion'
 
 export default function Sparkles() {
   const particles = useMemo(() => {
-    return Array.from({ length: 40 }, (_, i) => {
+    return Array.from({ length: 100 }, (_, i) => {
       const isStar = i % 3 === 0
+      const dotSize = (i % 3) + 3 // 3px, 4px, or 5px
       return {
         id: i,
         isStar,
+        dotSize,
         left: `${((i * 19 + 7) % 96) + 2}%`,
         top: `${((i * 29 + 11) % 94) + 3}%`,
         duration: 3 + (i % 4) * 0.9,
@@ -41,9 +43,15 @@ export default function Sparkles() {
           }}
         >
           {p.isStar ? (
-            <span className="text-amber-500/50 text-sm leading-none block select-none">✦</span>
+            <span className="text-crimson/50 text-sm leading-none block select-none">✦</span>
           ) : (
-            <span className="block w-[3px] h-[3px] rounded-full bg-accent/40 blur-[1px] shadow-[0_0_6px_rgba(217,84,30,0.6)]" />
+            <span
+              className="block rounded-full bg-crimson/50 blur-[1px] shadow-[0_0_8px_rgba(255,0,60,0.7)]"
+              style={{
+                width: `${p.dotSize}px`,
+                height: `${p.dotSize}px`,
+              }}
+            />
           )}
         </motion.div>
       ))}

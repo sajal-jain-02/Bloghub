@@ -30,7 +30,7 @@ const featuredArticles = [
 
 export default function FeaturedPosts() {
   return (
-    <section className="w-full bg-obsidian pt-12 pb-24 px-6 border-b border-chrome/10">
+    <section id="featured" className="w-full bg-obsidian pt-12 pb-24 px-6 border-b border-chrome/10 scroll-mt-16">
       <div className="max-w-5xl mx-auto">
         {/* Section Header with Crimson-to-Transparent Gradient Line */}
         <div className="flex items-center gap-6 mb-12">

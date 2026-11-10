@@ -1,6 +1,6 @@
 export default function Features() {
   return (
-    <section className="w-full bg-obsidian py-24 px-6 border-b border-chrome/10 relative overflow-hidden">
+    <section id="features" className="w-full bg-obsidian py-24 px-6 border-b border-chrome/10 relative overflow-hidden scroll-mt-16">
       {/* Background ambient glow */}
       <div
         className="absolute top-1/2 left-1/4 -translate-y-1/2 -translate-x-1/2 w-96 h-96 bg-crimson/5 rounded-full blur-[120px] pointer-events-none"

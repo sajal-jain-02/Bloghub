@@ -1,6 +1,6 @@
 export default function CallToAction() {
   return (
-    <section className="w-full relative z-10 py-16 md:py-24 flex flex-col items-center justify-center overflow-hidden">
+    <section id="manifesto" className="w-full relative z-10 py-16 md:py-24 flex flex-col items-center justify-center overflow-hidden scroll-mt-16">
       {/* Soft background glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-crimson/5 blur-[120px] rounded-full pointer-events-none z-[-1]" />
 

@@ -3,7 +3,7 @@ import Sparkles from '../ui/Sparkles'
 
 export default function Hero() {
   return (
-    <section className="relative w-full bg-obsidian min-h-[calc(100vh-4rem)] flex flex-col items-center justify-center px-6 py-8 overflow-hidden border-b border-chrome/10">
+    <section id="home" className="relative w-full bg-obsidian min-h-[calc(100vh-4rem)] flex flex-col items-center justify-center px-6 py-8 overflow-hidden border-b border-chrome/10">
       {/* Background Sparkles */}
       <Sparkles />
 
@@ -36,18 +36,18 @@ export default function Hero() {
 
         {/* Action Buttons */}
         <div className="flex flex-row gap-4 mt-10">
-          <button
-            type="button"
-            className="bg-crimson text-white px-8 py-3.5 rounded-full font-medium hover:bg-crimson/90 transition shadow-sm shadow-crimson/30 hover:shadow-md hover:shadow-crimson/50"
+          <a
+            href="#manifesto"
+            className="bg-crimson text-white px-8 py-3.5 rounded-full font-medium hover:bg-crimson/90 transition shadow-sm shadow-crimson/30 hover:shadow-md hover:shadow-crimson/50 inline-block text-center cursor-pointer"
           >
             Start Writing
-          </button>
-          <button
-            type="button"
-            className="border border-chrome/20 text-chrome-bright px-8 py-3.5 rounded-full font-medium hover:bg-chrome/10 transition"
+          </a>
+          <a
+            href="#trending"
+            className="border border-chrome/20 text-chrome-bright px-8 py-3.5 rounded-full font-medium hover:bg-chrome/10 transition inline-block text-center cursor-pointer"
           >
             Explore Blogs
-          </button>
+          </a>
         </div>
 
         {/* Editor Mockup Card */}

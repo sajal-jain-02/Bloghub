@@ -73,7 +73,7 @@ function BlogCard({ blog }) {
 
 export default function TrendingMarquee() {
   return (
-    <section className="w-full bg-obsidian pt-12 pb-6 overflow-hidden relative z-10 border-y border-chrome/10 flex flex-col gap-6">
+    <section id="trending" className="w-full bg-obsidian pt-12 pb-6 overflow-hidden relative z-10 border-y border-chrome/10 flex flex-col gap-6 scroll-mt-16">
       {/* Row 1: Forward Marquee */}
       <div className="animate-marquee flex gap-6 w-max" style={{ animationDuration: '32s' }}>
         {duplicatedRow1.map((blog, index) => (

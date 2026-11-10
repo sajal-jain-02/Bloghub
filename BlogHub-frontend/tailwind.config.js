@@ -7,16 +7,10 @@ export default {
   theme: {
     extend: {
       colors: {
-        cream: '#f3eee3',
-        ink: {
-          DEFAULT: '#111111',
-          muted: 'rgba(17, 17, 17, 0.7)',
-          faint: 'rgba(17, 17, 17, 0.1)',
-        },
-        accent: {
-          DEFAULT: '#D9541E',
-          hover: '#c24615',
-        },
+        obsidian: '#0B0C0E',        // 60% - Main Background
+        chrome: '#C0C0C0',          // 30% - Secondary text and borders
+        'chrome-bright': '#FFFFFF', // Headings
+        crimson: '#FF003C',         // 10% - Accents, buttons, hovers
       },
     },
   },

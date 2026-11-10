@@ -3,6 +3,7 @@ import Navbar from './components/landing/Navbar'
 import Hero from './components/landing/Hero'
 import TrendingMarquee from './components/landing/TrendingMarquee'
 import FeaturedPosts from './components/landing/FeaturedPosts'
+import Features from './components/landing/Features'
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Hero />
         <TrendingMarquee />
         <FeaturedPosts />
+        <Features />
       </motion.div>
     </div>
   )

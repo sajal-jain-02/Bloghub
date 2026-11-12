@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { Menu, X } from 'lucide-react'
 import logo from '../../assets/logo.png'
 
@@ -12,10 +13,18 @@ const navLinks = [
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const location = useLocation()
+  const navigate = useNavigate()
 
   const handleNavClick = (e, href) => {
     e.preventDefault()
     setMobileMenuOpen(false)
+
+    if (location.pathname !== '/') {
+      navigate(`/${href}`)
+      return
+    }
+
     const element = document.querySelector(href)
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' })
@@ -27,8 +36,8 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 w-full bg-obsidian/90 backdrop-blur-md border-b border-chrome/10">
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
         {/* Left Brand Identity */}
-        <a
-          href="#home"
+        <Link
+          to="/"
           onClick={(e) => handleNavClick(e, '#home')}
           className="flex items-center gap-2.5 cursor-pointer select-none group"
         >
@@ -40,7 +49,7 @@ export default function Navbar() {
           <span className="font-serif font-bold text-2xl tracking-tight text-chrome-bright">
             Blog<span className="text-crimson">Hub</span>
           </span>
-        </a>
+        </Link>
 
         {/* Center Navigation (Desktop) */}
         <nav className="hidden md:flex items-center gap-8">
@@ -58,19 +67,18 @@ export default function Navbar() {
 
         {/* Right Action Buttons */}
         <div className="hidden md:flex items-center gap-3">
-          <button
-            type="button"
+          <Link
+            to="/login"
             className="text-sm font-medium text-chrome hover:text-crimson px-3 py-2 transition-colors cursor-pointer"
           >
             Login
-          </button>
-          <a
-            href="#manifesto"
-            onClick={(e) => handleNavClick(e, '#manifesto')}
+          </Link>
+          <Link
+            to="/register"
             className="text-sm font-medium bg-crimson hover:bg-crimson/90 text-white px-5 py-2 rounded-full transition-all duration-150 shadow-sm shadow-crimson/30 cursor-pointer"
           >
             Get Started
-          </a>
+          </Link>
         </div>
 
         {/* Mobile Hamburger Button */}
@@ -100,19 +108,20 @@ export default function Navbar() {
             </a>
           ))}
           <div className="flex items-center gap-3 pt-4 border-t border-chrome/10">
-            <button
-              type="button"
-              className="text-sm font-medium text-chrome hover:text-crimson px-3 py-2 transition-colors flex-1"
+            <Link
+              to="/login"
+              onClick={() => setMobileMenuOpen(false)}
+              className="text-sm font-medium text-chrome hover:text-crimson px-3 py-2 transition-colors flex-1 text-center"
             >
               Login
-            </button>
-            <a
-              href="#manifesto"
-              onClick={(e) => handleNavClick(e, '#manifesto')}
+            </Link>
+            <Link
+              to="/register"
+              onClick={() => setMobileMenuOpen(false)}
               className="text-sm font-medium bg-crimson hover:bg-crimson/90 text-white px-5 py-2 rounded-full text-center transition-all duration-150 flex-1"
             >
               Get Started
-            </a>
+            </Link>
           </div>
         </div>
       )}

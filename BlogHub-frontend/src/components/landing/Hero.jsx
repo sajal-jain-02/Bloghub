@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import AuroraText from '../ui/AuroraText'
 import Sparkles from '../ui/Sparkles'
 
@@ -36,12 +37,12 @@ export default function Hero() {
 
         {/* Action Buttons */}
         <div className="flex flex-row gap-4 mt-10">
-          <a
-            href="#manifesto"
+          <Link
+            to="/register"
             className="bg-crimson text-white px-8 py-3.5 rounded-full font-medium hover:bg-crimson/90 transition shadow-sm shadow-crimson/30 hover:shadow-md hover:shadow-crimson/50 inline-block text-center cursor-pointer"
           >
             Start Writing
-          </a>
+          </Link>
           <a
             href="#trending"
             className="border border-chrome/20 text-chrome-bright px-8 py-3.5 rounded-full font-medium hover:bg-chrome/10 transition inline-block text-center cursor-pointer"

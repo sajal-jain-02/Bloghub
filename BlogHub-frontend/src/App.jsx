@@ -1,3 +1,4 @@
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import Navbar from './components/landing/Navbar'
 import Hero from './components/landing/Hero'
@@ -6,8 +7,10 @@ import FeaturedPosts from './components/landing/FeaturedPosts'
 import Features from './components/landing/Features'
 import CallToAction from './components/landing/CallToAction'
 import Footer from './components/landing/Footer'
+import AuthPage from './pages/AuthPage'
+import { AuthProvider } from './context/AuthContext'
 
-function App() {
+function LandingPage() {
   return (
     <div className="min-h-screen bg-obsidian text-chrome flex flex-col">
       <Navbar />
@@ -25,6 +28,21 @@ function App() {
         <Footer />
       </motion.div>
     </div>
+  )
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <AuthProvider>
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/login" element={<AuthPage mode="login" />} />
+          <Route path="/register" element={<AuthPage mode="register" />} />
+          <Route path="*" element={<LandingPage />} />
+        </Routes>
+      </AuthProvider>
+    </BrowserRouter>
   )
 }
 

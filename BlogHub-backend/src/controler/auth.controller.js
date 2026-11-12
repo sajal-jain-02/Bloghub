@@ -177,4 +177,23 @@ async function getMe(req, res) {
 
 }
 
-module.exports = { registerUser, loginUser, getMe };
+async function logoutUser(req, res) {
+    try {
+        res.clearCookie("token", {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax"
+        });
+
+        return res.status(200).json({
+            message: "User logged out successfully"
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            message: "Internal server error"
+        });
+    }
+}
+
+module.exports = { registerUser, loginUser, getMe, logoutUser };

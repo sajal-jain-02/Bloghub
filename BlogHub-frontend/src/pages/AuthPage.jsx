@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { Eye, EyeOff } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import peacefulImage from '../assets/peaceful-image.jpg'
 
@@ -10,8 +11,10 @@ export default function AuthPage({ mode = 'login' }) {
   const [formData, setFormData] = useState({
     username: '',
     email: '',
+    identifier: '',
     password: '',
   })
+  const [showPassword, setShowPassword] = useState(false)
   const [localError, setLocalError] = useState('')
 
   const handleChange = (e) => {
@@ -26,9 +29,10 @@ export default function AuthPage({ mode = 'login' }) {
     setLocalError('')
 
     if (mode === 'login') {
-      const result = await login(formData.email, formData.password)
+      const loginIdentifier = (formData.identifier || formData.email || formData.username).trim()
+      const result = await login(loginIdentifier, formData.password)
       if (result.success) {
-        navigate('/')
+        navigate('/explore')
       } else {
         setLocalError(result.error || 'Login failed. Please check your credentials.')
       }
@@ -39,7 +43,7 @@ export default function AuthPage({ mode = 'login' }) {
         formData.password
       )
       if (result.success) {
-        navigate('/')
+        navigate('/explore')
       } else {
         setLocalError(result.error || 'Registration failed. Please check your details.')
       }
@@ -49,13 +53,13 @@ export default function AuthPage({ mode = 'login' }) {
   const displayedError = localError || authError
 
   return (
-    <div className="min-h-screen grid grid-cols-1 lg:grid-cols-2 bg-[#0B0C10] text-white">
+    <div className="min-h-screen grid grid-cols-1 lg:grid-cols-[42%_58%] bg-[#0B0C10] text-white">
       {/* ── Left Column (Visual Showcase - pure foliage & sky container) ── */}
-      <div className="hidden lg:block relative w-full h-full overflow-hidden">
+      <div className="hidden lg:block relative h-screen overflow-hidden bg-black">
         <img
           src={peacefulImage}
           alt="Peaceful nature perspective"
-          className="absolute inset-0 w-full h-full object-cover"
+          className="w-full h-full object-cover object-center"
         />
       </div>
 
@@ -99,51 +103,86 @@ export default function AuthPage({ mode = 'login' }) {
               </div>
             )}
 
-            {mode === 'register' && (
+            {mode === 'register' ? (
+              <>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-mono text-chrome/70 uppercase tracking-wider">
+                    Username
+                  </label>
+                  <input
+                    type="text"
+                    name="username"
+                    value={formData.username}
+                    onChange={handleChange}
+                    placeholder="Your username"
+                    required
+                    autoComplete="username"
+                    className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-lg focus:border-crimson focus:outline-none focus:ring-1 focus:ring-crimson text-white placeholder:text-white/30 text-sm transition-all"
+                  />
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-mono text-chrome/70 uppercase tracking-wider">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="you@domain.com"
+                    required
+                    autoComplete="email"
+                    className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-lg focus:border-crimson focus:outline-none focus:ring-1 focus:ring-crimson text-white placeholder:text-white/30 text-sm transition-all"
+                  />
+                </div>
+              </>
+            ) : (
               <div className="flex flex-col gap-1.5">
                 <label className="text-xs font-mono text-chrome/70 uppercase tracking-wider">
-                  Username
+                  Email or Username
                 </label>
                 <input
                   type="text"
-                  name="username"
-                  value={formData.username}
+                  name="identifier"
+                  value={formData.identifier}
                   onChange={handleChange}
-                  placeholder="Your username"
+                  placeholder="you@domain.com or username"
                   required
+                  autoComplete="username"
                   className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-lg focus:border-crimson focus:outline-none focus:ring-1 focus:ring-crimson text-white placeholder:text-white/30 text-sm transition-all"
                 />
               </div>
             )}
 
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-mono text-chrome/70 uppercase tracking-wider">
-                Email
-              </label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="you@domain.com"
-                required
-                className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-lg focus:border-crimson focus:outline-none focus:ring-1 focus:ring-crimson text-white placeholder:text-white/30 text-sm transition-all"
-              />
-            </div>
-
+            {/* Password input with show/hide toggle */}
             <div className="flex flex-col gap-1.5">
               <label className="text-xs font-mono text-chrome/70 uppercase tracking-wider">
                 Password
               </label>
-              <input
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="••••••••"
-                required
-                className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-lg focus:border-crimson focus:outline-none focus:ring-1 focus:ring-crimson text-white placeholder:text-white/30 text-sm transition-all"
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="••••••••"
+                  required
+                  autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
+                  className="w-full pl-4 pr-20 py-3 bg-white/[0.03] border border-white/10 rounded-lg focus:border-crimson focus:outline-none focus:ring-1 focus:ring-crimson text-white placeholder:text-white/30 text-sm transition-all"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-mono text-zinc-400 hover:text-white flex items-center gap-1.5 transition cursor-pointer select-none px-1.5 py-1 rounded"
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                  <span className="text-[11px] uppercase tracking-wider">
+                    {showPassword ? 'Hide' : 'Show'}
+                  </span>
+                </button>
+              </div>
             </div>
 
             <button

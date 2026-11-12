@@ -190,7 +190,8 @@ async function getAllPosts(req, res) {
         .find(filter)
         .sort({ createdAt: sortDirection })
         .skip((page - 1) * limit)
-        .limit(limit);
+        .limit(limit)
+        .populate("author", "name username avatar");
 
         const totalPosts = await postModel.countDocuments(filter);
         const totalPages = Math.ceil(totalPosts / limit);

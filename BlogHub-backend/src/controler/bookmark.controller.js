@@ -1,5 +1,7 @@
 const bookmarkModel = require("../models/bookmark.model");
 const postModel = require("../models/post.model");
+const likeModel = require("../models/like.model");
+const commentModel = require("../models/comment.model");
 
 async function bookmarkPost(req, res) {
     try{
@@ -47,13 +49,48 @@ async function getBookmarks(req, res) {
     try{
         const userId = req.user.id;
         const bookmarks = await bookmarkModel
-        .find({user: userId})
-        .populate('post')
-        .sort({createdAt: -1});
+            .find({user: userId})
+            .populate({
+                path: 'post',
+                populate: {
+                    path: 'author',
+                    select: 'username profilePhoto bio'
+                }
+            })
+            .sort({createdAt: -1});
+
+        const validBookmarks = bookmarks.filter((b) => b.post != null);
+
+        const enhancedBookmarks = await Promise.all(
+            validBookmarks.map(async (b) => {
+                const postObj = b.post.toObject ? b.post.toObject() : b.post;
+                const likesCount = await likeModel.countDocuments({
+                    post: postObj._id
+                });
+                const commentsCount = await commentModel.countDocuments({
+                    post: postObj._id
+                });
+                const isLiked = !!(await likeModel.exists({
+                    user: userId,
+                    post: postObj._id
+                }));
+
+                return {
+                    ...b.toObject(),
+                    post: {
+                        ...postObj,
+                        likesCount,
+                        commentsCount,
+                        isLiked,
+                        isBookmarked: true
+                    }
+                };
+            })
+        );
 
         return res.status(200).json({
             message: "Bookmarks fetched successfully",
-            bookmarks
+            bookmarks: enhancedBookmarks
         });
 
     } catch (error) {

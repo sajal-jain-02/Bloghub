@@ -10,7 +10,7 @@ const idempotencyMiddleware = require("../middlewares/idempotency.middleware");
 Router.post("/create", authMiddleware, idempotencyMiddleware, postController.createPost);
 Router.post("/", authMiddleware, idempotencyMiddleware, postController.createPost);
 Router.get('/', optionalAuthMiddleware, postController.getAllPosts)
-Router.get('/user/:userId', validateObjectId('userId'), optionalAuthMiddleware, postController.getUserPosts)
+Router.get('/user/:userId', optionalAuthMiddleware, postController.getUserPosts)
 Router.get('/:id', validateObjectId('id'), optionalAuthMiddleware, postController.getPostByID)
 Router.patch('/:id', authMiddleware, idempotencyMiddleware, validateObjectId('id'), postController.updatePost)
 Router.delete('/:id', authMiddleware, idempotencyMiddleware, validateObjectId('id'), postController.deletePost)

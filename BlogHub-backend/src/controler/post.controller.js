@@ -191,7 +191,7 @@ async function getAllPosts(req, res) {
         .sort({ createdAt: sortDirection })
         .skip((page - 1) * limit)
         .limit(limit)
-        .populate("author", "name username avatar");
+        .populate("author", "name username avatar profilePhoto");
 
         const totalPosts = await postModel.countDocuments(filter);
         const totalPages = Math.ceil(totalPosts / limit);
@@ -239,12 +239,20 @@ async function getUserPosts(req, res) {
     try {
         const { userId } = req.params;
 
-        const user = await userModel.findById(userId);
+        let user = null;
+        if (mongoose.Types.ObjectId.isValid(userId)) {
+            user = await userModel.findById(userId);
+        }
+        if (!user) {
+            user = await userModel.findOne({ username: userId });
+        }
         if (!user) {
             return res.status(404).json({
                 message: "User not found"
             });
         }
+
+        const targetId = user._id;
 
         let page = Number(req.query.page ?? 1);
         if (!Number.isInteger(page) || page <= 0) {
@@ -277,12 +285,13 @@ async function getUserPosts(req, res) {
         const sortDirection = sort === "newest" ? -1 : 1;
 
         const posts = await postModel
-            .find({ author: userId })
+            .find({ author: targetId })
             .sort({ createdAt: sortDirection })
             .skip((page - 1) * limit)
-            .limit(limit);
+            .limit(limit)
+            .populate('author', 'username profilePhoto bio');
 
-        const totalPosts = await postModel.countDocuments({ author: userId });
+        const totalPosts = await postModel.countDocuments({ author: targetId });
         const totalPages = Math.ceil(totalPosts / limit);
 
         const postsWithLikes = await Promise.all(
@@ -291,18 +300,29 @@ async function getUserPosts(req, res) {
                     post: post._id
                 });
 
+                const commentsCount = await commentModel.countDocuments({
+                    post: post._id
+                });
+
                 let isLiked = false;
+                let isBookmarked = false;
                 if (req.user) {
-                    isLiked = await likeModel.exists({
+                    isLiked = !!(await likeModel.exists({
                         user: req.user.id,
                         post: post._id
-                    });
+                    }));
+                    isBookmarked = !!(await bookmarkModel.exists({
+                        user: req.user.id,
+                        post: post._id
+                    }));
                 }
 
                 return {
                     ...post.toObject(),
                     likesCount,
-                    isLiked
+                    commentsCount,
+                    isLiked,
+                    isBookmarked
                 };
             })
         );
@@ -326,7 +346,7 @@ async function getUserPosts(req, res) {
 async function getPostByID (req, res) {
     try{
         const { id } = req.params;
-        const post = await postModel.findById(id);
+        const post = await postModel.findById(id).populate("author", "username profilePhoto bio");
         if(!post){
             return res.status(404).json({
                 message:"Post not found"
@@ -336,12 +356,21 @@ async function getPostByID (req, res) {
             post: post._id
         });
 
+        const commentsCount = await commentModel.countDocuments({
+            post: post._id
+        });
+
         let isLiked = false;
+        let isBookmarked = false;
         if (req.user) {
-            isLiked = await likeModel.exists({
+            isLiked = !!(await likeModel.exists({
                 user: req.user.id,
                 post: post._id
-            });
+            }));
+            isBookmarked = !!(await bookmarkModel.exists({
+                user: req.user.id,
+                post: post._id
+            }));
         }
 
         res.status(200).json({
@@ -349,7 +378,9 @@ async function getPostByID (req, res) {
             post: {
                 ...post.toObject(),
                 likesCount,
-                isLiked
+                commentsCount,
+                isLiked,
+                isBookmarked
             }
         })
     } catch(error){

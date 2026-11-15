@@ -24,7 +24,9 @@ async function createComment(req,res) {
             text: text.trim(),
             post: postId,
             author: req.user.id
-        })
+        });
+
+        await comment.populate("author", "username profilePhoto");
         
         return res.status(201).json({
             "message": "Comment created successfully",
@@ -47,7 +49,10 @@ async function getComments(req, res) {
             return res.status(404).json({ message: 'Post not found' });
         }
 
-        const comments = await commentModel.find({ post: postId });
+        const comments = await commentModel
+            .find({ post: postId })
+            .populate("author", "username profilePhoto")
+            .sort({ createdAt: 1 });
         return res.status(200).json({
             "message": "Comments fetched successfully",
             comments: comments

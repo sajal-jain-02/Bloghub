@@ -15,6 +15,7 @@ export function AuthProvider({ children }) {
       return null
     }
   })
+  const [isVerifying, setIsVerifying] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)
 
@@ -36,6 +37,10 @@ export function AuthProvider({ children }) {
         if (isMounted) {
           setUser(null)
           localStorage.removeItem('bloghub_user')
+        }
+      } finally {
+        if (isMounted) {
+          setIsVerifying(false)
         }
       }
     }
@@ -109,14 +114,21 @@ export function AuthProvider({ children }) {
     }
   }
 
-  const logout = () => {
-    setUser(null)
-    localStorage.removeItem('bloghub_user')
+  const logout = async () => {
+    try {
+      await axios.post(`${API_BASE_URL}/auth/logout`, {}, { withCredentials: true })
+    } catch (err) {
+      console.error('Logout error:', err)
+    } finally {
+      setUser(null)
+      localStorage.removeItem('bloghub_user')
+    }
   }
 
   const value = {
     user,
     isAuthenticated: !!user,
+    isVerifying,
     isLoading,
     error,
     setError,

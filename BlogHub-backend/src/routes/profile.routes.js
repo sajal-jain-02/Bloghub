@@ -16,7 +16,7 @@ Router.post("/me/profile-photo", authMiddleware, uploadProfilePhoto, profileCont
 Router.post("/me/cover-photo", authMiddleware, uploadCoverPhoto, profileController.uploadCoverPhoto);
 Router.get("/:userId/followers", optionalAuthMiddleware, validateObjectId("userId"), profileController.getFollowers);
 Router.get("/:userId/following", optionalAuthMiddleware, validateObjectId("userId"), profileController.getFollowing);
-Router.get("/:userId", optionalAuthMiddleware, validateObjectId("userId"), profileController.getPublicProfile);
+Router.get("/:userId", optionalAuthMiddleware, profileController.getPublicProfile);
 
 Router.use(handleMulterError);
 

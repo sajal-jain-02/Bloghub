@@ -14,6 +14,10 @@ const postSchema = new mongoose.Schema({
         ref:"user",
         required:true
     },
+    coverImage:{
+        type:String,
+        default:null
+    },
     createdAt:{
         type:Date,
         default:Date.now

@@ -1,30 +1,32 @@
+import { Link } from 'react-router-dom'
+
 const featuredArticles = [
   {
-    id: '1',
-    title: 'Building a Full-Stack Blog with Express and MongoDB',
+    id: '673700000000000000000001',
+    title: 'Building Scalable, Fault-Tolerant Architectures with Node.js and MongoDB',
     excerpt:
-      'From schema design and indexing in Mongoose to robust JWT session handling and paginated API endpoints, here is a complete architectural blueprint for a modern publishing engine.',
-    author: 'Mark Henry',
-    date: 'Nov 09, 2026',
-    readTime: '8 min read',
-  },
-  {
-    id: '2',
-    title: 'Automating WhatsApp Bookings with n8n and WhatsApp Cloud API',
-    excerpt:
-      'How to orchestrate webhooks, parse inbound customer payloads, and automate real-time slot scheduling without writing complex middleware boilerplate.',
+      'Modern distributed web backends demand high throughput, strict operational reliability, and clean abstraction boundaries. How to combine atomic request idempotency with bounded connection pools and resilient retry policies.',
     author: 'Elena Rostova',
-    date: 'Nov 06, 2026',
-    readTime: '6 min read',
+    date: 'Nov 14, 2026',
+    readTime: '3 min read',
   },
   {
-    id: '3',
-    title: 'Mastering Neumorphism & Glass UI in CSS',
+    id: '673700000000000000000002',
+    title: 'The Architecture of Digital Quietude: Why We Built a Canvas Without Algorithms',
     excerpt:
-      'Exploring hardware-accelerated backdrops, layered specular highlights, and ambient light sources to design tactile, futuristic interfaces that remain fully accessible.',
+      'The modern internet has largely devolved into an attention-mining apparatus. Why reclaiming chronological reading feeds and tactile monochrome typography transforms writing from passive scrolling into an active cognitive dialogue.',
+    author: 'Anita Desai',
+    date: 'Nov 12, 2026',
+    readTime: '3 min read',
+  },
+  {
+    id: '673700000000000000000003',
+    title: 'Mastering Tactile Editorial Interfaces: Specular Highlights and Glass Physics in Modern CSS',
+    excerpt:
+      'Exploring ambient light physics, hardware-accelerated backdrops, and sub-pixel hairline catchlights to craft tactile, high-density OLED interfaces that stay lightning-fast at 120fps.',
     author: 'Marcus Chen',
-    date: 'Nov 03, 2026',
-    readTime: '5 min read',
+    date: 'Nov 10, 2026',
+    readTime: '3 min read',
   },
 ]
 
@@ -43,9 +45,10 @@ export default function FeaturedPosts() {
         {/* Articles Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           {featuredArticles.map((article) => (
-            <article
+            <Link
+              to={`/post/${article.id}`}
               key={article.id}
-              className="group cursor-pointer flex flex-col h-full gap-4 p-6 rounded-2xl border border-chrome/10 bg-[#121316]/70 hover:bg-[#18191e]/90 hover:border-crimson/30 hover:shadow-2xl hover:shadow-crimson/10 hover:-translate-y-2 transition-all duration-300"
+              className="group cursor-pointer flex flex-col h-full gap-4 p-6 rounded-2xl border border-chrome/10 bg-[#121316]/70 hover:bg-[#18191e]/90 hover:border-crimson/30 hover:shadow-2xl hover:shadow-crimson/10 hover:-translate-y-2 transition-all duration-300 select-none text-left"
             >
               {/* Meta Top */}
               <div className="text-xs text-chrome/70 font-mono">
@@ -72,7 +75,7 @@ export default function FeaturedPosts() {
                   </span>
                 </span>
               </div>
-            </article>
+            </Link>
           ))}
         </div>
       </div>

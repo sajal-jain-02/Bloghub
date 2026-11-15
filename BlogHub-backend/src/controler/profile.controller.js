@@ -7,9 +7,17 @@ async function getPublicProfile(req, res) {
     try {
         const { userId } = req.params;
 
-        const user = await userModel
-            .findById(userId)
-            .select("-password");
+        let user = null;
+        if (mongoose.Types.ObjectId.isValid(userId)) {
+            user = await userModel
+                .findById(userId)
+                .select("-password");
+        }
+        if (!user) {
+            user = await userModel
+                .findOne({ username: userId })
+                .select("-password");
+        }
 
         if (!user) {
             return res.status(404).json({
@@ -17,19 +25,21 @@ async function getPublicProfile(req, res) {
             });
         }
 
+        const targetId = user._id;
+
         // Determine if visitor is the profile owner
-        const isOwner = req.user && req.user.id === userId.toString();
+        const isOwner = req.user && req.user.id === targetId.toString();
 
         // Calculate follow counts
-        const followersCount = await followModel.countDocuments({ following: userId });
-        const followingCount = await followModel.countDocuments({ follower: userId });
+        const followersCount = await followModel.countDocuments({ following: targetId });
+        const followingCount = await followModel.countDocuments({ follower: targetId });
 
         // Calculate isFollowing
         let isFollowing = false;
         if (req.user && !isOwner) {
             const follow = await followModel.findOne({
                 follower: req.user.id,
-                following: userId
+                following: targetId
             });
             isFollowing = !!follow;
         }

@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 
 export default function Sparkles() {
   const particles = useMemo(() => {
-    return Array.from({ length: 100 }, (_, i) => {
+    return Array.from({ length: 28 }, (_, i) => {
       const isStar = i % 3 === 0
       const dotSize = (i % 3) + 3 // 3px, 4px, or 5px
       return {

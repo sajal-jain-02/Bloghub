@@ -3,8 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { Image as ImageIcon } from 'lucide-react'
 import axios from 'axios'
 import { useAuth } from '../context/AuthContext'
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
+import { API_BASE_URL } from '../config/api'
 
 export default function WritePage() {
   const navigate = useNavigate()

@@ -5,8 +5,7 @@ import axios from 'axios'
 import AppLayout from '../components/layout/AppLayout'
 import { useAuth } from '../context/AuthContext'
 import { Skeleton, SkeletonAvatar } from '../components/ui/Skeleton'
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
+import { API_BASE_URL } from '../config/api'
 
 function timeAgo(dateString) {
   if (!dateString) return ''

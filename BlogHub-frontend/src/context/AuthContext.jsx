@@ -1,10 +1,9 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState, useEffect } from 'react'
 import axios from 'axios'
+import { API_BASE_URL } from '../config/api'
 
 const AuthContext = createContext(null)
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {

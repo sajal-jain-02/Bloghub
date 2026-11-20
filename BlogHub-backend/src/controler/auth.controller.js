@@ -124,11 +124,12 @@ async function loginUser(req, res) {
             id: user.id
         } , process.env.JWT_SECRET, { expiresIn: '1h' })
     
+        const isProd = process.env.NODE_ENV === "production";
         res.cookie("token", token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "lax"
-        })
+            secure: isProd,
+            sameSite: isProd ? "none" : "lax"
+        });
     
         res.status(200).json({
             message:"User logged in successfully",
@@ -179,10 +180,11 @@ async function getMe(req, res) {
 
 async function logoutUser(req, res) {
     try {
+        const isProd = process.env.NODE_ENV === "production";
         res.clearCookie("token", {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "lax"
+            secure: isProd,
+            sameSite: isProd ? "none" : "lax"
         });
 
         return res.status(200).json({
